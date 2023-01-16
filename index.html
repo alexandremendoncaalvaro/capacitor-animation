@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            vertical-align: baseline;
+            list-style: none;
+            border: 0
+        }
+
+        button {
+            width: 121px;
+            height: 50px;
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <canvas id="canvas" width="394" height="700"></canvas>
+    </div>
+    <div style="display: flex;">
+        <button id="btn_ficar_sair">Ficar/ Sair de cima</button>
+        <button id="btn_add_balao">Adicionar Capacitor</button>
+        <button id="btn_passar_sobre" style="display: none;">Passar sobre</button>
+        <button id="btn_reset" onclick="location.reload(true)">Reset</button>
+    </div>
+    <script src="https://unpkg.com/@rive-app/canvas@1.0.79"></script>
+    <script>
+        const btn_add_balao = document.getElementById('btn_add_balao');
+        const btn_ficar_sair = document.getElementById('btn_ficar_sair');
+        const btn_filtrar = document.getElementById('btn_passar_sobre');
+
+        const r = new rive.Rive({
+            src: 'capacitor.riv',
+            canvas: document.getElementById('canvas'),
+            autoplay: true,
+            stateMachines: 'Motion',
+            fit: rive.Fit.cover,
+            onLoad: (_) => {
+                // Get the inputs via the name of the state machine
+                const inputs = r.stateMachineInputs('Motion');
+                // Find the input you want to set a value for, or trigger
+                const filtrar = inputs.find(i => i.name === 'Filtrar');
+                btn_filtrar.onclick = () => filtrar.fire();
+
+                const add_balao = inputs.find(i => i.name === 'AddBalão');
+                btn_add_balao.onclick = () => {
+                    btn_ficar_sair.style.display = "none";
+                    btn_add_balao.style.display = "none";
+                    btn_filtrar.style.display = "block";
+                    add_balao.fire()
+                };
+
+                const ficar_sair = inputs.find(i => i.name === 'BaixarFluxo');
+                btn_ficar_sair.onclick = () => ficar_sair.value = !ficar_sair.value;
+            },
+        });
+    </script>
+</body>
+
+</html>
